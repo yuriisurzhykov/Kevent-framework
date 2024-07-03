@@ -17,7 +17,7 @@ interface DefaultStickyEventsFactory {
      * @param kClass The KClass of the sticky event type.
      * @return An instance of the specified sticky event type.
      */
-    fun <T : Event.Sticky> produce(kClass: KClass<T>): T
+    fun <T : Event.Sticky> createDefault(kClass: KClass<T>): T
 
     /**
      *  Produces an instance of a sticky event that derived from [Event.StickyCollection]
@@ -28,5 +28,5 @@ interface DefaultStickyEventsFactory {
      *
      *  @return An instance of the specified event class type
      * */
-    fun <T : Event.StickyCollection<*>> produce(kClass: KClass<T>): T
+    fun <T : Event.StickyCollection<*>> createDefault(kClass: KClass<T>): T
 }
