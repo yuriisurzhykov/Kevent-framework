@@ -1,0 +1,3 @@
+com.github.yuriisurzhykov.kevent.events.persisted.ksp.PersistableEventsSymbolProcessorProvider
+com.github.yuriisurzhykov.kevent.events.persisted.ksp.AutoDatabaseSymbolProcessorProvider
+com.github.yuriisurzhykov.kevent.events.persisted.ksp.EventRegistrySymbolProcessorProvider
