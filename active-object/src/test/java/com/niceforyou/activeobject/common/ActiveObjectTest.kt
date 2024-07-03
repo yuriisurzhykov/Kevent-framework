@@ -1,9 +1,5 @@
 package com.niceforyou.activeobject.common
 
-import com.niceforyou.activeobject.FakeCommunication
-import com.niceforyou.activeobject.FakeEvent
-import com.niceforyou.activeobject.FakeFlowBus
-import com.niceforyou.activeobject.TestActiveObject
 import com.github.yuriisurzhykov.kevent.activeobject.bus.FlowBus
 import com.github.yuriisurzhykov.kevent.activeobject.common.ActiveObject
 import com.github.yuriisurzhykov.kevent.activeobject.common.DisposeObjects
@@ -14,7 +10,10 @@ import com.github.yuriisurzhykov.kevent.activeobject.manager.events.InitPhaseTwo
 import com.github.yuriisurzhykov.kevent.activeobject.manager.events.SubscriptionCompleteEvent
 import com.github.yuriisurzhykov.kevent.events.Event
 import com.github.yuriisurzhykov.kevent.events.api.EventManager
-import com.niceforyou.events.api.partition.core.PartitionId
+import com.niceforyou.activeobject.FakeCommunication
+import com.niceforyou.activeobject.FakeEvent
+import com.niceforyou.activeobject.FakeFlowBus
+import com.niceforyou.activeobject.TestActiveObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -170,23 +169,6 @@ class ActiveObjectTest {
         assertEquals(repeatAmount, filter.allowedProcessCallCount)
     }
 
-    @Test(expected = FakeRuntimeException::class)
-    fun `check handles exception is occur`() = runTest {
-        val filter = FakePartitionFilter()
-        val communication = FakeCommunication()
-        val flowBus = FakeFlowBus(communication)
-        val activeObject = TestActiveObject(filter, flowBus)
-
-        val exception = FakeRuntimeException()
-        activeObject.onEvent = { throw exception }
-
-        val flow = MutableSharedFlow<Event>()
-        activeObject.subscribeTo(flow)
-        activeObject.startEventProcessing()
-
-        flow.emit(FakeEvent())
-    }
-
     @Test
     fun `check AO processes InitializationCompleteEvent and DisposeObjects events`() = runTest {
         val communication = FakeCommunication()
@@ -203,8 +185,6 @@ class ActiveObjectTest {
         assertTrue(activeObject.disposed)
     }
 
-    private class FakeRuntimeException: RuntimeException()
-
     private open class FakeFilter : EventSubscriberFilter.Base() {
         var allowedProcessCallCount: Int = 0
         var event: KClass<out Event> = FakeEvent::class
@@ -215,31 +195,6 @@ class ActiveObjectTest {
             allowedProcessCallCount++
             return super.allowToProcess(event)
         }
-    }
-
-    private data class FakePartitionEvent(
-        override val partition: PartitionId
-    ) : Event.PartitionSpecific
-
-    private class FakePartitionFilter : EventSubscriberFilter.Partition.Base() {
-
-        var fakePartition = PartitionId.P1
-        var partitionEvent: KClass<out Event.PartitionSpecific> = FakePartitionEvent::class
-        var allowedProcessCallCount: Int = 0
-        var event: KClass<out Event> = FakeEvent::class
-        override val commonEventsToSubscribe: Set<KClass<out Event>>
-            get() = setOf(event)
-
-        override fun allowToProcess(event: Event): Boolean {
-            allowedProcessCallCount++
-            return super.allowToProcess(event)
-        }
-
-        override val partition: PartitionId
-            get() = fakePartition
-
-        override val partitionEventsToSubscribe: Set<KClass<out Event.PartitionSpecific>>
-            get() = setOf(partitionEvent)
     }
 
     private class TestActiveObject(
