@@ -1,3 +1,5 @@
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
         google {
@@ -21,4 +23,11 @@ dependencyResolutionManagement {
 
 rootProject.name = "Kevent-framework"
 include(":app")
- 
+include(":events-core")
+include(":events-ksp")
+include(":ksp-core")
+include(":persisted-events-android")
+include(":persisted-events-core")
+include(":persisted-events-ksp")
+include(":state-machine")
+include(":active-object")

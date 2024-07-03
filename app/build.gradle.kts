@@ -1,16 +1,18 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
     namespace = "com.github.yuriisurzhykov.kevent"
-    compileSdk = 34
+    compileSdk = ProjectProperties.compileSdkVersion
 
     defaultConfig {
         applicationId = "com.github.yuriisurzhykov.kevent"
-        minSdk = 26
-        targetSdk = 34
+        minSdk = ProjectProperties.minSdkVersion
+        targetSdk = ProjectProperties.targetSdkVersion
         versionCode = 1
         versionName = "1.0"
 
@@ -27,15 +29,23 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = ProjectProperties.javaSourceCompatibility
+        targetCompatibility = ProjectProperties.javaTargetCompatibility
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = ProjectProperties.kotlinJvmTarget
     }
 }
 
 dependencies {
+
+    implementation(projects.eventsCore)
+    implementation(projects.stateMachine)
+    implementation(projects.persistedEventsCore)
+    implementation(projects.activeObject)
+
+    ksp(projects.eventsKsp)
+    ksp(projects.persistedEventsKsp)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
