@@ -36,6 +36,7 @@ dependencies {
     implementation(projects.eventsCore)
     implementation(projects.stateMachine)
     implementation(projects.persistedEventsCore)
+    implementation(projects.eventBus)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlin.reflect)

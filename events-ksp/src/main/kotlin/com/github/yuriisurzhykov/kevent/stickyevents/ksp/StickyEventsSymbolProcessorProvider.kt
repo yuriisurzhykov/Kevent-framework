@@ -9,7 +9,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorProvider
  *
  * This class is used by the Kotlin Symbol Processing API to create instances
  * of StickyEventsSymbolProcessor. It serves as a factory for creating symbol processors
- * that are specifically designed to generate code for sticky events in the FlowBus library.
+ * that are specifically designed to generate code for sticky events in the EventBus library.
  * Class should be registered in META-INF resources in order KSP API would be able to find this
  * provider.
  */

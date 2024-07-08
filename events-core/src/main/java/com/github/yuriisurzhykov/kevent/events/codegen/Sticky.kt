@@ -1,7 +1,7 @@
 package com.github.yuriisurzhykov.kevent.events.codegen
 
 /**
- * Object `Sticky` is responsible for creating factory for sticky events in FlowBus.
+ * Object `Sticky` is responsible for creating factory for sticky events in EventBus.
  * It provides a mechanism to generate default values for sticky events.
  */
 object Sticky {
@@ -15,7 +15,7 @@ object Sticky {
      * @throws RuntimeException If an implementation for the specified factory cannot be found,
      *                          cannot be accessed, or cannot be instantiated.
      */
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "unused")
     fun <T : DefaultStickyEventsFactory> createFactory(klass: Class<T>): T {
         // Extracting the package and class name information.
         val fullPackage = klass.`package`.name

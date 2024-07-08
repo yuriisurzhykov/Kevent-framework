@@ -9,7 +9,7 @@ class FakeSubscribeFilter : EventSubscriberFilter.Base {
     private val subscribeClass: KClass<out Event>
 
     constructor() {
-        subscribeClass = FakeEvent::class
+        subscribeClass = TestEvent::class
     }
 
     constructor(eventClass: KClass<out Event>) {

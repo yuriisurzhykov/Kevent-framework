@@ -22,8 +22,8 @@ interface StateMachineContext {
     fun <T : ServiceLocator> serviceLocator(): T
 
     /**
-     *  All state machines should have an opportunity to publish some events to the [FlowBus].
-     *  [FlowBus] implements [EventManager] interface and in any of states you can get access to
+     *  All state machines should have an opportunity to publish some events to the [EventBus].
+     *  [EventBus] implements [EventManager] interface and in any of states you can get access to
      *  that flow bus through [StateMachineContext.eventManager] by calling [EventManager.publish]
      * */
     @Suppress("KDocUnresolvedReference")

@@ -21,7 +21,7 @@ package com.github.yuriisurzhykov.kevent.statemachine.context
  *
  *      override fun processEvent(event: Event): ProcessResult {
  *          return if (event is SomeEvent) {
- *              val stickyEvent = FlowBus.getSticky(SomeEventGroup.Event::class)
+ *              val stickyEvent = EventBus.getSticky(SomeEventGroup.Event::class)
  *              val isMatchesCondition = stickyEvent.data == "SomeValue"
  *              if (isMatchesCondition) transitionTo(AnotherState)
  *              else unhandled(event)
@@ -50,7 +50,7 @@ package com.github.yuriisurzhykov.kevent.statemachine.context
  *  interface SomeClassToProvide {
  *      fun matchesConditions(): Boolean
  *      class Base: SomeClassToProvide {
- *          override fun matchesCondition() = FlowBus.getSticky(Event::class).data == "SomeValue"
+ *          override fun matchesCondition() = EventBus.getSticky(Event::class).data == "SomeValue"
  *      }
  *  }
  *

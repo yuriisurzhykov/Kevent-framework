@@ -1,0 +1,2 @@
+-keep public class * extends com.github.yuriisurzhykov.kevent.events.codegen.DefaultStickyEventsFactory { *; }
+-keep class com.github.yuriisurzhykov.kevent.events.codegen.DefaultStickyEventsFactory { *; }

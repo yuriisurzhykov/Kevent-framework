@@ -1,7 +1,6 @@
 package com.niceforyou.activeobject.communication
 
-import com.github.yuriisurzhykov.kevent.activeobject.communication.FlowCommunication
-import com.niceforyou.activeobject.FakeEvent
+import com.github.yuriisurzhykov.kevent.eventbus.communication.FlowCommunication
 import com.niceforyou.activeobject.TestStickyEvent
 import com.github.yuriisurzhykov.kevent.events.Event
 import com.github.yuriisurzhykov.kevent.events.NoStickyValueFoundException
@@ -27,7 +26,7 @@ class FlowCommunicationTest {
         val communication = FlowCommunication.Base(stickyMap, mutexMap, flow)
 
         // When
-        val expectedEvent = FakeEvent()
+        val expectedEvent = TestEvent()
         communication.emit(expectedEvent)
 
         // Then

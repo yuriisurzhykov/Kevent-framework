@@ -40,7 +40,7 @@ interface Event {
         /**
          * Any custom validation logic can be done here. [EventNotValidException] should be
          * returned if validation wasn't success.
-         * @param eventManager The FlowBus instance to use if there is a need to read extra sticky
+         * @param eventManager The EventBus instance to use if there is a need to read extra sticky
          * events.
          * @return [EventNotValidException] instance if the exception should occur or null if
          * validation success or no validation needed.
@@ -59,7 +59,7 @@ interface Event {
     /**
      *  Events with payloads may optionally inherit from this [Sticky] interface to cause the event
      *  to be stored in runtime memory. Any code can read the payload of a Sticky event at any
-     *  time by using the `FlowBus.getSticky` method.
+     *  time by using the `EventBus.getSticky` method.
      *  If you inherit class from this interface, you also have to mark you class with [DefaultableStickyEvent]
      *  annotation to have the kotlin compiler generate factory of default values.
      * */

@@ -2,7 +2,7 @@
 
 package com.niceforyou.activeobject
 
-import com.github.yuriisurzhykov.kevent.activeobject.bus.FlowBus
+import com.github.yuriisurzhykov.kevent.activeobject.bus.EventBus
 import com.github.yuriisurzhykov.kevent.activeobject.common.ActiveObjectWithHSM
 import com.github.yuriisurzhykov.kevent.activeobject.manager.AoManager
 import com.github.yuriisurzhykov.kevent.events.Event
@@ -27,14 +27,14 @@ class HsmActiveObjectTest {
         val stateMachine = TestStateMachine()
 
         val communication = FakeCommunication()
-        val flowBus = FakeFlowBus(communication)
-        val hsmAo = TestHsmAo(stateMachine, flowBus)
-        val aoManager = AoManager(setOf(hsmAo), flowBus, UnconfinedTestDispatcher())
+        val EventBus = FakeEventBus(communication)
+        val hsmAo = TestHsmAo(stateMachine, EventBus)
+        val aoManager = AoManager(setOf(hsmAo), EventBus, UnconfinedTestDispatcher())
         aoManager.startInitialization()
 
         val testEvent = TestEvent()
 
-        flowBus.publish(testEvent)
+        EventBus.publish(testEvent)
 
         assertEquals(State1, stateMachine.current().value)
 
@@ -44,7 +44,7 @@ class HsmActiveObjectTest {
         assertEquals(1, stateMachine.processCallsCount)
         assertEquals(testEvent, stateMachine.processedEvents[0])
 
-        flowBus.publish(testEvent)
+        EventBus.publish(testEvent)
 
         assertEquals(2, currentState.processEventCallsAmount)
         assertEquals(2, stateMachine.processCallsCount)
@@ -54,9 +54,9 @@ class HsmActiveObjectTest {
     fun `test state machine throws exception`() = runTest {
         val stateMachine = TestStateMachine()
         val communication = FakeCommunication()
-        val flowBus = FakeFlowBus(communication)
-        val hsmAo = TestHsmAo(stateMachine, flowBus)
-        val aoManager = AoManager(setOf(hsmAo), flowBus, UnconfinedTestDispatcher())
+        val EventBus = FakeEventBus(communication)
+        val hsmAo = TestHsmAo(stateMachine, EventBus)
+        val aoManager = AoManager(setOf(hsmAo), EventBus, UnconfinedTestDispatcher())
         aoManager.startInitialization()
 
         val testEvent = TestEvent()
@@ -68,7 +68,7 @@ class HsmActiveObjectTest {
         val exception = RuntimeException()
         stateMachine.processEvent = { throw exception }
 
-        flowBus.publish(testEvent)
+        EventBus.publish(testEvent)
 
         assertEquals(1, currentState.enterCallCount)
         assertEquals(0, currentState.processEventCallsAmount)
@@ -99,7 +99,7 @@ data object State1 : State.Normal(null) {
 }
 
 internal class TestStateMachine :
-    StateMachine.Abstract(State1, ServiceLocator.Empty(), FakeFlowBus(FakeCommunication())) {
+    StateMachine.Abstract(State1, ServiceLocator.Empty(), FakeEventBus(FakeCommunication())) {
 
     var processCallsCount: Int = 0
     val processedEvents = mutableListOf<Event>()
@@ -116,10 +116,10 @@ internal class TestStateMachine :
 
 private class TestHsmAo(
     stateMachine: StateMachine,
-    flowBus: FlowBus
+    eventBus: EventBus
 ) : ActiveObjectWithHSM(
     stateMachine,
-    flowBus,
+    EventBus,
     FakeSubscribeFilter(TestEvent::class),
     UnconfinedTestDispatcher()
 ) {
@@ -142,7 +142,7 @@ private class TestHsmAo(
         processedErrors.add(error)
     }
 
-    override suspend fun publishInitialEvents(flowBus: EventManager) {
+    override suspend fun publishInitialEvents(eventManager: EventManager) {
         publishCallCount++
     }
 }

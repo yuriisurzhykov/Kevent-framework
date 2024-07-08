@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 /**
  *  Event `PhaseTwoReadyEvent` only sent when every event in application subscribed to
- *  FlowBus and ready to send initial sticky and non-sticky events.
+ *  EventBus and ready to send initial sticky and non-sticky events.
  * */
 @Serializable
 @SerialName("AO_PhaseTwoDone")

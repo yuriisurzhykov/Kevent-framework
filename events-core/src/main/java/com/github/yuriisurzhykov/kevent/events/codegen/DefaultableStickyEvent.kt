@@ -1,7 +1,7 @@
 package com.github.yuriisurzhykov.kevent.events.codegen
 
 /**
- * Annotation used to designate a class as a component of the Sticky event system in the FlowBus
+ * Annotation used to designate a class as a component of the Sticky event system in the EventBus
  * library. Classes annotated with `DefaultableStickyEvent` are recognized as part of the sticky event
  * handling mechanism, typically for the purpose of generating default values in generated factory
  * [DefaultStickyEventsFactory] for sticky events.

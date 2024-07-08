@@ -1,11 +1,11 @@
 package com.github.yuriisurzhykov.kevent.activeobject.manager.hsm
 
-import com.github.yuriisurzhykov.kevent.activeobject.bus.FlowBus
 import com.github.yuriisurzhykov.kevent.activeobject.common.ActiveObject
 import com.github.yuriisurzhykov.kevent.activeobject.common.InitializationCompleteEvent
 import com.github.yuriisurzhykov.kevent.activeobject.manager.AoManager
 import com.github.yuriisurzhykov.kevent.activeobject.manager.events.InitPhaseTwoDone
 import com.github.yuriisurzhykov.kevent.activeobject.manager.events.SubscriptionCompleteEvent
+import com.github.yuriisurzhykov.kevent.eventbus.EventBus
 import com.github.yuriisurzhykov.kevent.statemachine.StateMachine
 import com.github.yuriisurzhykov.kevent.statemachine.context.ServiceLocator
 
@@ -21,9 +21,9 @@ import com.github.yuriisurzhykov.kevent.statemachine.context.ServiceLocator
  * */
 internal class AoManagerStateMachine(
     aoSet: Set<ActiveObject>,
-    flowBus: FlowBus
+    eventBus: EventBus
 ) : StateMachine.Abstract(
-    InitPhaseOneState(aoSet, flowBus),
+    InitPhaseOneState(aoSet, eventBus),
     ServiceLocator.Empty(),
-    flowBus
+    eventBus
 )

@@ -1,6 +1,6 @@
 package com.github.yuriisurzhykov.kevent.activeobject.common
 
-import com.github.yuriisurzhykov.kevent.activeobject.bus.FlowBus
+import com.github.yuriisurzhykov.kevent.eventbus.EventBus
 import com.github.yuriisurzhykov.kevent.activeobject.manager.AoManager
 import com.github.yuriisurzhykov.kevent.activeobject.manager.events.ClassSerialWrapper
 import com.github.yuriisurzhykov.kevent.activeobject.manager.events.InitPhaseTwoDone
@@ -16,10 +16,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
@@ -28,7 +24,7 @@ import kotlin.coroutines.CoroutineContext
  *  Abstract class representing an active object that listens to and processes events.
  *
  *  @property eventFilter A filter containing the classes that Active Object should subscribe to.
- *  @property flowBus The FlowBus instance for event communication.
+ *  @property eventBus The EventBus instance for event communication.
  *  @property coroutineContext The coroutine context on which this active object operates. This
  *  property created to add more flexibility to test AO logic and for further modifications if they
  *  require.
@@ -36,7 +32,7 @@ import kotlin.coroutines.CoroutineContext
  */
 abstract class ActiveObject(
     private val eventFilter: EventSubscriberFilter,
-    private val flowBus: FlowBus,
+    private val eventBus: EventBus,
     private val coroutineContext: CoroutineContext = AoCoroutineContext(),
     private val name: String? = null
 ) {
@@ -45,7 +41,7 @@ abstract class ActiveObject(
     private val supervisorJob: Job = SupervisorJob()
     private val activeObjectName: String? = name ?: this::class.simpleName
 
-    // The kotlin coroutines channel that consumes events from FlowBus
+    // The kotlin coroutines channel that consumes events from EventBus
     private val eventQueue: Channel<Event> = Channel(Channel.UNLIMITED)
 
     // Indicator for active object to not be initialized more then 1 time.
@@ -65,7 +61,7 @@ abstract class ActiveObject(
      *  when all AOs sent [SubscriptionCompleteEvent]
      *  Must be implemented by derived classes to publish class-related events.
      */
-    protected abstract suspend fun publishInitialEvents(flowBus: EventManager)
+    protected abstract suspend fun publishInitialEvents(eventManager: EventManager)
 
     /**
      *  Handles incoming events.
@@ -73,7 +69,7 @@ abstract class ActiveObject(
      *
      *  @param event The event to be processed.
      */
-    protected abstract suspend fun onEvent(event: Event, flowBus: FlowBus)
+    protected abstract suspend fun onEvent(event: Event, eventBus: EventBus)
 
     /**
      *  Represents one of AO's lifecycle stages. Called once AO subscribed for receiving events
@@ -99,21 +95,12 @@ abstract class ActiveObject(
         throw error
     }
 
-    /**
-     *  Internal function to subscribe on [FlowBus]'s event flow. It is not accessible from outside
-     *  of module `:activeObject`. So only internal resources have access to this function.
-     * */
-    internal fun subscribeTo(flow: SharedFlow<Event>) {
+    internal suspend fun subscribeForEvents(eventBus: EventBus) {
         if (!hasInitialized.getAndSet(true)) {
-            coroutineScope.launch {
-                // Subscribes for events on the provided coroutine scope,
-                // and sends the event to event queue.
-                flow
-                    .onEach { event -> sendEventToQueue(event) }
-                    .catch { error -> handleError(error) }
-                    .launchIn(coroutineScope)
-                notifyActiveObjectSubscribed()
+            eventFilter.commonEventsToSubscribe.forEach { event ->
+                eventBus.subscribe(event, coroutineScope, ::sendEventToQueue, ::handleError)
             }
+            notifyActiveObjectSubscribed()
         } else throw IllegalStateException("Active Object $activeObjectName is already initialized!")
     }
 
@@ -126,7 +113,7 @@ abstract class ActiveObject(
         // Wrapping up class to ClassSerialWrapper because of serialization issue of kclass
         val classReference = ClassSerialWrapper(this@ActiveObject::class)
         // Notifies AoManager about this AO is ready to publish sticky events
-        flowBus.publish(SubscriptionCompleteEvent(classReference))
+        eventBus.publish(SubscriptionCompleteEvent(classReference))
     }
 
     /**
@@ -135,10 +122,10 @@ abstract class ActiveObject(
      * */
     internal fun doInternalInitialization() {
         coroutineScope.launch {
-            publishInitialEvents(flowBus)
+            publishInitialEvents(eventBus)
             val classReference = ClassSerialWrapper(this@ActiveObject::class)
             // Notifies AoManager about this AO is ready to publish sticky events
-            flowBus.publish(InitPhaseTwoDone(classReference))
+            eventBus.publish(InitPhaseTwoDone(classReference))
         }
     }
 
@@ -182,7 +169,7 @@ abstract class ActiveObject(
         }
 
         is DisposeObjects -> dispose()
-        else                           -> onEvent(event, flowBus)
+        else -> onEvent(event, eventBus)
     }
 
     /**

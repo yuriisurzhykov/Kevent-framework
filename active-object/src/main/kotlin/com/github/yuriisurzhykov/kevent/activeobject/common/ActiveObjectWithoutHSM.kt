@@ -1,7 +1,7 @@
 package com.github.yuriisurzhykov.kevent.activeobject.common
 
-import com.github.yuriisurzhykov.kevent.activeobject.bus.FlowBus
 import com.github.yuriisurzhykov.kevent.activeobject.scopes.AoCoroutineContext
+import com.github.yuriisurzhykov.kevent.eventbus.EventBus
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -11,8 +11,8 @@ import kotlin.coroutines.CoroutineContext
  * */
 @Suppress("unused")
 abstract class ActiveObjectWithoutHSM(
-    flowBus: FlowBus,
+    eventBus: EventBus,
     eventFilter: EventSubscriberFilter,
     coroutineContext: CoroutineContext = AoCoroutineContext(),
     name: String? = null
-) : ActiveObject(eventFilter, flowBus, coroutineContext, name)
+) : ActiveObject(eventFilter, eventBus, coroutineContext, name)

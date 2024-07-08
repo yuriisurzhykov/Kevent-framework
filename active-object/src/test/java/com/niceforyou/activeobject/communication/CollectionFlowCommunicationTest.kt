@@ -1,7 +1,6 @@
 package com.niceforyou.activeobject.communication
 
-import com.github.yuriisurzhykov.kevent.activeobject.communication.CollectionFlowCommunication
-import com.niceforyou.activeobject.FakeEvent
+import com.github.yuriisurzhykov.kevent.eventbus.communication.CollectionFlowCommunication
 import com.niceforyou.activeobject.TestStickyEvent
 import com.github.yuriisurzhykov.kevent.events.Event
 import kotlinx.coroutines.test.runTest
@@ -28,7 +27,7 @@ class CollectionFlowCommunicationTest {
         )
 
         // When
-        val expectedEvent = FakeEvent()
+        val expectedEvent = TestEvent()
         communication.emit(expectedEvent)
 
         // Then

@@ -1,12 +1,12 @@
 package com.niceforyou.activeobject
 
-import com.github.yuriisurzhykov.kevent.activeobject.bus.EventValidator
-import com.github.yuriisurzhykov.kevent.activeobject.bus.FlowBus
 import com.github.yuriisurzhykov.kevent.activeobject.common.ActiveObject
 import com.github.yuriisurzhykov.kevent.activeobject.common.EventSubscriberFilter
 import com.github.yuriisurzhykov.kevent.events.Event
 import com.github.yuriisurzhykov.kevent.events.api.EventManager
 import com.github.yuriisurzhykov.kevent.events.validation.ValidateEventKey
+import com.github.yuriisurzhykov.kevent.eventbus.EventValidator
+import com.github.yuriisurzhykov.kevent.eventbus.EventBus
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -23,9 +23,9 @@ internal class TestEvent : Event
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class TestActiveObject(
-    flowBus: FakeFlowBus,
+    eventBus: EventBus,
     filter: EventSubscriberFilter = FakeSubscribeFilter(TestEvent::class)
-) : ActiveObject(filter, flowBus, UnconfinedTestDispatcher()) {
+) : ActiveObject(filter, eventBus, UnconfinedTestDispatcher()) {
 
     var processCallAmount: Int = 0
     val processedEvents = mutableListOf<Event>()
@@ -46,7 +46,7 @@ internal class TestActiveObject(
         disposed = true
     }
 
-    override suspend fun onEvent(event: Event, flowBus: FlowBus) {
+    override suspend fun onEvent(event: Event, eventBus: EventBus) {
         processEvent.invoke(event)
     }
 
@@ -54,7 +54,7 @@ internal class TestActiveObject(
         processedErrors.add(error)
     }
 
-    override suspend fun publishInitialEvents(flowBus: EventManager) {
+    override suspend fun publishInitialEvents(eventManager: EventManager) {
 
     }
 }

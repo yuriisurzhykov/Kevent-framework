@@ -1,7 +1,7 @@
 package com.niceforyou.activeobject.communication
 
 import com.niceforyou.activeobject.TestStickyCollection
-import com.github.yuriisurzhykov.kevent.activeobject.communication.operation.OperateStickyCollection
+import com.github.yuriisurzhykov.kevent.eventbus.communication.operation.OperateStickyCollection
 import com.github.yuriisurzhykov.kevent.events.Event
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals

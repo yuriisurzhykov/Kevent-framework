@@ -2,7 +2,7 @@ package com.niceforyou.activeobject.common
 
 import com.github.yuriisurzhykov.kevent.activeobject.common.EventSubscriberFilter
 import com.github.yuriisurzhykov.kevent.events.Event
-import com.niceforyou.activeobject.FakeEvent
+import com.niceforyou.activeobject.TestEvent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -15,17 +15,17 @@ class SubscribeEventFilterTest {
     fun `check allow to process if ordinal event in common set`() = runTest {
         val filter = object : EventSubscriberFilter.Base() {
             override val commonEventsToSubscribe: Set<KClass<out Event>> =
-                setOf(FakeEvent::class)
+                setOf(TestEvent::class)
         }
 
-        assertTrue(filter.allowToProcess(FakeEvent()))
+        assertTrue(filter.allowToProcess(TestEvent))
     }
 
     @Test
     fun `check NOT allow to process if ordinal event in common set`() = runTest {
         val filter = object : EventSubscriberFilter.Base() {
             override val commonEventsToSubscribe: Set<KClass<out Event>> =
-                setOf(FakeEvent::class)
+                setOf(TestEvent::class)
         }
 
         assertFalse(filter.allowToProcess(FakeOrdinalEvent(1)))

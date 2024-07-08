@@ -98,6 +98,6 @@ interface StateMachine : ContextProvider {
         }
     }
 
-    class Base(initialState: State, serviceLocator: ServiceLocator, flowBus: EventManager) :
-        Abstract(initialState, serviceLocator, flowBus)
+    class Base(initialState: State, serviceLocator: ServiceLocator, eventBus: EventManager) :
+        Abstract(initialState, serviceLocator, eventBus)
 }

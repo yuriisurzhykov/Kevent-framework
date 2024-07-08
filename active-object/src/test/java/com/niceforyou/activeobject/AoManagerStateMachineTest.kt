@@ -18,26 +18,26 @@ class AoManagerStateMachineTest {
     @Test
     fun `test InitPhaseOneState subscribe AO in onEnter`() = runTest {
         val communication = FakeCommunication()
-        val flowBus = FakeFlowBus(communication)
-        val fakeAo = FakeActiveObject(flowBus)
-        val state = InitPhaseOneState(setOf(fakeAo), flowBus)
+        val EventBus = FakeEventBus(communication)
+        val fakeAo = FakeActiveObject(EventBus)
+        val state = InitPhaseOneState(setOf(fakeAo), EventBus)
 
-        val stateMachine = AoManagerStateMachine(setOf(fakeAo), flowBus)
+        val stateMachine = AoManagerStateMachine(setOf(fakeAo), EventBus)
 
         state.onEnter(stateMachine.context, null)
         val expected = setOf(fakeAo)
-        val actual = flowBus.subscribedAos
+        val actual = EventBus.subscribedAos
         assertEquals(expected, actual)
     }
 
     @Test
     fun `test InitPhaseOneState moves to InitPhaseTwoState`() = runTest {
         val communication = FakeCommunication()
-        val flowBus = FakeFlowBus(communication)
-        val fakeAo = FakeActiveObject(flowBus)
-        val state = InitPhaseOneState(setOf(fakeAo), flowBus)
+        val EventBus = FakeEventBus(communication)
+        val fakeAo = FakeActiveObject(EventBus)
+        val state = InitPhaseOneState(setOf(fakeAo), EventBus)
 
-        val stateMachine = AoManagerStateMachine(setOf(fakeAo), flowBus)
+        val stateMachine = AoManagerStateMachine(setOf(fakeAo), EventBus)
 
         val actual = state.processEvent(
             SubscriptionCompleteEvent(ClassSerialWrapper(fakeAo::class)),
@@ -53,11 +53,11 @@ class AoManagerStateMachineTest {
     @Test
     fun `test InitPhaseTwoState call publish initial events in onEnter`() = runTest {
         val communication = FakeCommunication()
-        val flowBus = FakeFlowBus(communication)
-        val fakeAo = FakeActiveObject(flowBus)
+        val EventBus = FakeEventBus(communication)
+        val fakeAo = FakeActiveObject(EventBus)
         val state = InitPhaseTwoState(setOf(fakeAo))
 
-        val stateMachine = AoManagerStateMachine(setOf(fakeAo), flowBus)
+        val stateMachine = AoManagerStateMachine(setOf(fakeAo), EventBus)
 
         state.onEnter(stateMachine.context, null)
         val expected = 1
@@ -69,11 +69,11 @@ class AoManagerStateMachineTest {
     @Test
     fun `test InitPhaseOneState moves to InitializationCompleteState`() = runTest {
         val communication = FakeCommunication()
-        val flowBus = FakeFlowBus(communication)
-        val fakeAo = FakeActiveObject(flowBus)
+        val EventBus = FakeEventBus(communication)
+        val fakeAo = FakeActiveObject(EventBus)
         val state = InitPhaseTwoState(setOf(fakeAo))
 
-        val stateMachine = AoManagerStateMachine(setOf(fakeAo), flowBus)
+        val stateMachine = AoManagerStateMachine(setOf(fakeAo), EventBus)
 
         val actual = state.processEvent(
             InitPhaseTwoDone(ClassSerialWrapper(fakeAo::class)),
@@ -89,16 +89,16 @@ class AoManagerStateMachineTest {
     @Test
     fun `test InitializationComplete publishes InitializationCompleteEvent`() = runTest {
         val communication = FakeCommunication()
-        val flowBus = FakeFlowBus(communication)
-        val fakeAo = FakeActiveObject(flowBus)
+        val EventBus = FakeEventBus(communication)
+        val fakeAo = FakeActiveObject(EventBus)
         val state = InitializationCompleteState(setOf(fakeAo))
 
-        val stateMachine = AoManagerStateMachine(setOf(fakeAo), flowBus)
+        val stateMachine = AoManagerStateMachine(setOf(fakeAo), EventBus)
 
         state.onEnter(stateMachine.context, null)
 
         val expected = listOf(InitializationCompleteEvent)
-        val actual = flowBus.sentEvents
+        val actual = EventBus.sentEvents
         assertEquals(expected, actual)
     }
 }

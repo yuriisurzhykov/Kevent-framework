@@ -33,12 +33,12 @@ fun State.Normal.unhandled(event: Event) = ProcessResult.Unhandled(event, this)
  * Factory method to simplify construction of simple state machines without a need of creating
  * a lot of addition files and classes.
  * @param state It's an initial state which also possibly can be master(single) state.
- * @param flowBus Instance of [EventManager]. For application only one instance is `EventBus`
+ * @param eventBus Instance of [EventManager]. For application only one instance is `EventBus`
  * @param serviceLocator It is an instance of [ServiceLocator] interface that provides some
  * dependencies that can be used in [state].
  * */
 fun StateMachine(
     state: State,
-    flowBus: EventManager,
+    eventBus: EventManager,
     serviceLocator: ServiceLocator = ServiceLocator.Empty()
-) = StateMachine.Base(state, serviceLocator, flowBus)
+) = StateMachine.Base(state, serviceLocator, eventBus)

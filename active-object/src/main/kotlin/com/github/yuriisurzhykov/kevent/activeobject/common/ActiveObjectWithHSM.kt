@@ -1,7 +1,7 @@
 package com.github.yuriisurzhykov.kevent.activeobject.common
 
-import com.github.yuriisurzhykov.kevent.activeobject.bus.FlowBus
 import com.github.yuriisurzhykov.kevent.activeobject.scopes.AoCoroutineContext
+import com.github.yuriisurzhykov.kevent.eventbus.EventBus
 import com.github.yuriisurzhykov.kevent.events.Event
 import com.github.yuriisurzhykov.kevent.statemachine.StateMachine
 import kotlin.coroutines.CoroutineContext
@@ -12,18 +12,16 @@ import kotlin.coroutines.CoroutineContext
  * */
 abstract class ActiveObjectWithHSM(
     private val stateMachine: StateMachine,
-    flowBus: FlowBus,
+    eventBus: EventBus,
     eventFilter: EventSubscriberFilter,
     context: CoroutineContext = AoCoroutineContext()
-) : ActiveObject(eventFilter, flowBus, context) {
+) : ActiveObject(eventFilter, eventBus, context) {
 
     override suspend fun onCreated() {
         stateMachine.initialize()
     }
 
-    final override suspend fun onEvent(event: Event, flowBus: FlowBus) {
+    final override suspend fun onEvent(event: Event, eventBus: EventBus) {
         stateMachine.processEvent(event)
     }
-
-    fun getStateMachineContext() = stateMachine.context
 }
